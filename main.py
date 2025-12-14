@@ -44,14 +44,12 @@ def read_message_file(filename): # reads the message that will be hidden
     except:
         print("Error: Cannot read message file.")
         return None
-
-    if content == "":
-        print("Warning: Message file is empty.")
-        return ""
-
     return content
 
 def hide_message(input_image, output_image, secret): # hides message in photo
+    if secret == "":
+        print("Error: Secret message is empty.")
+        return
     if not file_exists(input_image): # validating again just incase
         print("Error: Image file does not exist.")
         return
@@ -147,8 +145,13 @@ def main():
             out = get_input("Enter output image name: ")
             file_name = get_input("Enter message file name: ")
             message = read_message_file(file_name)
-            if message is not None:
-                hide_message(img, out, message)
+            if message is None:
+                continue
+            if message == "":
+                print("Error: Message file is empty. Nothing to hide.")
+                continue
+            hide_message(img, out, message)
+
 
         elif choice == "3":
             img = get_input("Enter stego image name: ")
