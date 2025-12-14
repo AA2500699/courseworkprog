@@ -132,15 +132,15 @@ def main():
         print("3. Extract message")
         print("4. Exit")
 
-        choice = input("Choose option: ").strip()
+        choice = input("Choose option: ").strip().lower()
 
-        if choice == "1":
+        if choice == "1" or choice == "hide message you write":
             img = get_input("Enter BMP image name: ")
             out = get_input("Enter output image name: ")
             msg = input("Enter secret message: ")
             hide_message(img, out, msg)
 
-        elif choice == "2":
+        elif choice == "2" or choice == "hide message from text file":
             img = get_input("Enter BMP image name: ")
             out = get_input("Enter output image name: ")
             file_name = get_input("Enter message file name: ")
@@ -153,7 +153,7 @@ def main():
             hide_message(img, out, message)
 
 
-        elif choice == "3":
+        elif choice == "3" or choice == "extract message":
             img = get_input("Enter stego image name: ")
             extract_message(img)
 
