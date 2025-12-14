@@ -1,29 +1,29 @@
 HEADER_SIZE = 54
-END_MARK = "###"
+END_MARK = "###" #for the end of the hidden message
 
-def text_to_binary(text):
+def text_to_binary(text): #text to binary
     binary = ""
     for char in text:
         binary += format(ord(char), "08b")
     return binary
 
-def binary_to_text(binary):
+def binary_to_text(binary): #binary to text
     text = ""
     for i in range(0, len(binary), 8):
         byte = binary[i:i+8]
         if len(byte) < 8:
-            break
+            break # stops if remaining bits are not enough
         text += chr(int(byte, 2))
     return text
 
-def file_exists(filename):
+def file_exists(filename): # edge case to check if file exists
     try:
         open(filename, "rb").close()
         return True
     except:
         return False
 
-def is_bmp(filename):
+def is_bmp(filename): # checks if file type is bmp by its header
     try:
         file = open(filename, "rb")
         header = file.read(2)
@@ -32,7 +32,7 @@ def is_bmp(filename):
     except:
         return False
     
-def read_message_file(filename):
+def read_message_file(filename): # reads the message that will be hidden 
     if not file_exists(filename):
         print("Error: Message file does not exist.")
         return None
@@ -51,12 +51,12 @@ def read_message_file(filename):
 
     return content
 
-def hide_message(input_image, output_image, secret):
-    if not file_exists(input_image):
+def hide_message(input_image, output_image, secret): # hides message in photo
+    if not file_exists(input_image): # validating again just incase
         print("Error: Image file does not exist.")
         return
 
-    if not is_bmp(input_image):
+    if not is_bmp(input_image): # validating again just incase
         print("Error: Only BMP images are supported.")
         return
 
@@ -71,7 +71,7 @@ def hide_message(input_image, output_image, secret):
     secret = secret + END_MARK
     secret_binary = text_to_binary(secret)
 
-    if len(secret_binary) > len(image_bytes) - HEADER_SIZE:
+    if len(secret_binary) > len(image_bytes) - HEADER_SIZE: # checks if message too big
         print("Error: Message is too large for this image.")
         return
 
@@ -89,7 +89,7 @@ def hide_message(input_image, output_image, secret):
         
         print("Error: Could not save output image.")
 
-def extract_message(image):
+def extract_message(image): # extracts the hidden message
     if not file_exists(image):
         print("Error: Image file does not exist.")
         return
@@ -105,20 +105,20 @@ def extract_message(image):
     except:
         print("Error: Could not read image.")
         return
-
+# Reads least significant bits starting after BMP header
     binary = ""
     for i in range(HEADER_SIZE, len(data)):
         binary += str(data[i] & 1)
 
     message = binary_to_text(binary)
-
+#checks where end marker is and prints hidden message
     if END_MARK in message:
         print("Hidden message:")
         print(message.split(END_MARK)[0])
     else:
         print("Warning: No hidden message found.")
 
-def get_input(prompt):
+def get_input(prompt): # makes sure input isnt empty
     value = ""
     while value == "":
         value = input(prompt).strip()
